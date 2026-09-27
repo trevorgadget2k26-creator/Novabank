@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NovaBank</title>
+<style>
+*{box-sizing:border-box;margin:0;font-family:Arial}
+body{background:#0f0f1a;color:#fff;padding:15px}
+.card{background:#1a1a2e;padding:20px;border-radius:15px;margin-bottom:15px}
+button{background:#6c5ce7;color:#fff;border:none;padding:12px;border-radius:10px;width:100%;margin-top:10px;font-size:16px}
+input{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:1px solid #333;background:#252532;color:#fff}
+.hidden{display:none}
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.8);display:none;padding:20px;overflow:auto}
+.modal>div{background:#1a1a2e;padding:20px;border-radius:15px}
+</style>
+</head>
+<body>
+
+<div id="authPage" class="card">
+<h2>NovaBank</h2>
+<input id="aName" placeholder="Full Name">
+<input id="aPin" type="password" placeholder="PIN" maxlength="4">
+<button onclick="login()">Login / Signup</button>
+</div>
+
+<div id="appPage" class="hidden">
+<div class="card">
+<p>Welcome, <b id="uName"></b></p>
+<h1>₦<span id="uBal">0</span></h1>
+<button onclick="quickAdd()">+ Add ₦1,000</button>
+<button onclick="openSend()">Send Money</button>
+<button onclick="openSettings()">Settings</button>
+</div>
+<div class="card"><h3>Transactions</h3><div id="txList"></div></div>
+</div>
+
+<div id="sendModal" class="modal"><div>
+<h3>Send</h3>
+<input id="sBank" placeholder="Bank">
+<input id="sAcct" placeholder="Account Number">
+<input id="sAmt" type="number" placeholder="Amount">
+<button onclick="doSend()">Confirm Send</button>
+<button onclick="closeModals()" style="background:#333">Close</button>
+</div></div>
+
+<div id="receiptModal" class="modal"><div id="receiptBody"></div>
+<button onclick="closeModals()" style="background:#333">Close</button>
+</div></div>
+
+<div id="settingsModal" class="modal"><div>
+<h3>Settings</h3>
+
+<div style="background:#3a2a1a;padding:15px;border-radius:12px;margin:15px 0;border:1px solid #ff9800">
+<b>⭐ Upgrade Account</b>
+<p style="color:#888;font-size:13px;margin:8px 0">• Auto add balance<br>• Allow screenshots<br>• Add amount of your choice<br>• Show full receipt</p>
+<div style="background:#000;padding:10px;border-radius:8px;text-align:center;margin:10px 0">
+<b style="font-size:20px;color:#ff9800">₦5,000</b><br><small style="color:#888">One-time payment</small>
+</div>
+<p style="font-size:13px;text-align:center">Contact <b style="color:#ff9800">08036233499</b> to make payment</p>
+<button onclick="document.getElementById('upgradeBox').style.display='block'" style="background:#ff9800;color:#000">Upgrade Now</button>
+<div id="upStatus"></div>
+</div>
+
+<div id="upgradeBox" style="display:none;background:#252532;padding:15px;border-radius:12px;margin-bottom:12px">
+<b>Enter Upgrade Code</b>
+<input id="upCode" placeholder="Paste code here">
+<button onclick="verifyUpgrade()" style="background:#ff9800;color:#000">Activate</button>
+</div>
+
+<div id="premiumBox" style="display:none;background:#1a3a1a;padding:15px;border-radius:12px;margin-bottom:12px;border:1px solid #4ade80">
+<b>💎 Premium Active</b>
+<input id="customAmt" type="number" placeholder="Enter any amount">
+<button onclick="addCustom()" style="background:#4ade80;color:#000">Add Balance</button>
+</div>
+
+<button onclick="closeModals()" style="background:#333">Close</button>
+</div></div>
+
+<script>
+// Hidden code verification - real code NOT stored here
+const _h=2300150719;
+function _x(s){let h=5381;for(let i=0;i<s.length;i++){h=(((h<<5)+h+s.charCodeAt(i))>>>0)}return h}
+
+let bal=0,tx=[];
+function login(){
+let n=document.getElementById('aName').value||'User';
+let u=JSON.parse(localStorage.getItem('novabank_user')||'null');
+if(u){bal=u.bal;tx=u.tx||[];n=u.name}
+else{localStorage.setItem('novabank_user',JSON.stringify({name:n,bal:0,tx:[]}))}
+document.getElementById('uName').innerText=n;
+document.getElementById('authPage').classList.add('hidden');
+document.getElementById('appPage').classList.remove('hidden');
+render();checkPremium();
+}
+function save(){let u=JSON.parse(localStorage.getItem('novabank_user'));u.b
