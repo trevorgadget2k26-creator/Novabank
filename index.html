@@ -17,11 +17,15 @@ input{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:1px soli
 </head>
 <body>
 
-<div id="authPage" class="card">
-<h2>NovaBank</h2>
-<input id="aName" placeholder="Full Name">
-<input id="aPin" type="password" placeholder="PIN" maxlength="4">
-<button onclick="login()">Login / Signup</button>
+<function login(){
+let n=document.getElementById('aName').value;
+if(!n){alert('Enter your name');return;}
+document.getElementById('uName').innerText=n;
+document.getElementById('authPage').style.display='none';
+document.getElementById('appPage').style.display='block';
+document.getElementById('appPage').classList.remove('hidden');
+render();checkPremium();
+}
 </div>
 
 <div id="appPage" class="hidden">
